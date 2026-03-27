@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { getCatalog } from '../api/services';
+import { BASE_URL } from '../api/client';
 
 const { width: W, height: H } = Dimensions.get('window');
 const BANNER_H         = H * 0.68;
@@ -149,7 +150,7 @@ export default function BannerCarousel({ onItemPress }) {
         }
       } catch (err) {
         console.error('BannerCarousel fetch error:', err);
-        setError('Could not load banner.');
+        setError(`Could not load banner from ${BASE_URL}.`);
       } finally {
         setLoading(false);
       }
@@ -203,6 +204,7 @@ export default function BannerCarousel({ onItemPress }) {
     return (
       <View style={[styles.container, styles.errorWrap]}>
         <Text style={styles.errorText}>✦ Catalog unavailable</Text>
+        <Text style={styles.errorSub}>{error}</Text>
       </View>
     );
   }
@@ -305,4 +307,11 @@ const styles = StyleSheet.create({
   // error
   errorWrap: { alignItems: 'center', justifyContent: 'center' },
   errorText: { color: 'rgba(255,255,255,0.3)', fontSize: 13, letterSpacing: 2 },
+  errorSub: {
+    marginTop: 8,
+    paddingHorizontal: 24,
+    color: 'rgba(255,255,255,0.55)',
+    fontSize: 11,
+    textAlign: 'center',
+  },
 });

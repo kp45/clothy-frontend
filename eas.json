@@ -4,18 +4,31 @@
   },
   "build": {
     "preview": {
+      "channel": "preview",
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://e48a-27-109-16-26.ngrok-free.app"
+        "EXPO_PUBLIC_API_BASE_URL": "https://web-production-58e28.up.railway.app"
       }
     },
     "production": {
+      "channel": "production",
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://web-production-58e28.up.railway.app"
       }
     }
   }
 }
+
+
+
+
+
+
+
+

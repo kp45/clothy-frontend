@@ -8,6 +8,7 @@ import BannerCarousel from '../components/BannerCarousel';
 import ItemCard, { ItemCardSkeleton } from '../components/ItemCard';
 import TestimonialShowcase from '../components/TestimonialShowcase';
 import { getAllItems, getTestimonials } from '../api/services';
+import { BASE_URL } from '../api/client';
 
 const LIMIT         = 20;
 const SKELETON_COUNT = 8;
@@ -41,7 +42,7 @@ export default function HomeScreen({ navigation }) {
       pageRef.current = pageNum;
     } catch (err) {
       console.error('HomeScreen fetch error:', err);
-      setError('Could not load items. Check your connection.');
+      setError(`Could not load items from ${BASE_URL}.`);
     } finally {
       setLoading(false);
       setRefreshing(false);
