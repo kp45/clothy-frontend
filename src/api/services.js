@@ -1,40 +1,56 @@
 import api from './client';
-import { BASE_URL } from './client';
 
-const toBaseOrigin = () => {
-  try {
-    return new URL(BASE_URL).origin;
-  } catch {
-    return BASE_URL.replace(/\/+$/, '');
-  }
-};
+// Permanent Hostinger base where all uploaded images live.
+const HOSTINGER_BASE = 'https://gatijobs.in/ClothyAI/uploads';
 
-const BASE_ORIGIN = toBaseOrigin();
-const STATIC_PREFIX = '/static/';
-
+/**
+ * normalizeImageUrl
+ * -----------------
+ * Guarantees every image_url coming from the API or DB is a valid,
+ * permanent Hostinger URL. Handles three legacy cases:
+ *
+ *   1. Relative path    /static/images/abc.jpg
+ *      → https://gatijobs.in/ClothyAI/uploads/abc.jpg
+ *
+ *   2. Absolute Railway URL  https://railway.app/static/images/abc.jpg
+ *      → https://gatijobs.in/ClothyAI/uploads/abc.jpg
+ *
+ *   3. Already a Hostinger (or any other https) URL — passed through as-is.
+ */
 const normalizeImageUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
   const value = url.trim();
   if (!value) return value;
 
-  // Relative static path from API (recommended)
-  if (value.startsWith('/')) return `${BASE_ORIGIN}${value}`;
+  // ── Case 1: relative /static/images/ path stored by old local-upload code ──
+  if (value.startsWith('/static/images/')) {
+    const filename = value.replace('/static/images/', '');
+    return `${HOSTINGER_BASE}/${filename}`;
+  }
 
-  // Absolute URL: preserve CDN links, but rewrite static files to current API host.
+  // ── Case 2: bare "static/images/…" without leading slash ──────────────────
+  if (value.startsWith('static/images/')) {
+    const filename = value.replace('static/images/', '');
+    return `${HOSTINGER_BASE}/${filename}`;
+  }
+
+  // ── Case 3: absolute URL — check if it's a /static/images/ Railway URL ─────
   if (/^https?:\/\//i.test(value)) {
     try {
       const parsed = new URL(value);
-      if (parsed.pathname.startsWith(STATIC_PREFIX)) {
-        return `${BASE_ORIGIN}${parsed.pathname}${parsed.search}${parsed.hash}`;
+      if (parsed.pathname.startsWith('/static/images/')) {
+        const filename = parsed.pathname.replace('/static/images/', '');
+        return `${HOSTINGER_BASE}/${filename}`;
       }
-      return value;
     } catch {
-      return value;
+      // malformed URL — fall through and return as-is
     }
+    // Already an absolute Hostinger (or other CDN) URL — use it directly.
+    return value;
   }
 
-  // Bare relative path (e.g. "static/images/a.jpg")
-  return `${BASE_ORIGIN}/${value.replace(/^\/+/, '')}`;
+  // ── Fallback: treat as bare filename and append to Hostinger base ──────────
+  return `${HOSTINGER_BASE}/${value.replace(/^\/+/, '')}`;
 };
 
 const normalizeItem = (item) => {
@@ -115,6 +131,6 @@ export const uploadImage = async (localUri) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
-  // Keep uploaded file URL portable across LAN/tunnel host changes.
-  return normalizeImageUrl(res.data.url);
+  // Backend always returns an absolute Hostinger URL — use it directly.
+  return res.data.url;
 };
