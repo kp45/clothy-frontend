@@ -10,7 +10,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://web-production-58e28.up.railway.app"
+        "EXPO_PUBLIC_API_BASE_URL": "https://clothyapp.gatijobs.in"
       }
     },
     "production": {
@@ -19,12 +19,11 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://web-production-58e28.up.railway.app"
+        "EXPO_PUBLIC_API_BASE_URL": "https://clothyapp.gatijobs.in"
       }
     }
   }
 }
-
 
 
 

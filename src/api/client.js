@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { NativeModules, Platform } from 'react-native';
 
-const PROD_API_URL = 'https://web-production-58e28.up.railway.app';
+const PROD_API_URL = 'https://clothyapp.gatijobs.in';
 
 const cleanUrl = (url) => url.replace(/\/+$/, '');
 
@@ -11,7 +11,7 @@ const getBaseUrl = () => {
   const envUrl = cleanUrl((process.env.EXPO_PUBLIC_API_BASE_URL || '').trim());
   if (envUrl) return envUrl;
 
-  // 2. In production APK/AAB, always use Railway if env is missing.
+  // 2. In production APK/AAB, use the public deployed API if env is missing.
   if (!__DEV__) return PROD_API_URL;
 
   // 3. Auto-detect from Metro bundler host (Expo Go / dev client)

@@ -115,12 +115,12 @@ export const getTestimonials = () =>
 export const createTestimonial = (data) => api.post('/testimonials/', data);
 export const deleteTestimonial = (testimonialId) => api.delete(`/testimonials/${testimonialId}`);
 
-// ── Image upload ─────────────────────────────────────────────
+// ── Image upload (via Railway backend → Hostinger) ────────────────────────────
 // Accepts a local file URI from expo-image-picker.
-// Returns the full public URL string to store in image_url field.
+// Returns the full public Hostinger URL string to store in image_url field.
 export const uploadImage = async (localUri) => {
   const filename = localUri.split('/').pop();
-  const ext      = filename.split('.').pop().toLowerCase();
+  const ext      = (filename.split('.').pop() || 'jpg').toLowerCase();
   const mimeMap  = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
   const type     = mimeMap[ext] || 'image/jpeg';
 
@@ -131,6 +131,6 @@ export const uploadImage = async (localUri) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
-  // Backend always returns an absolute Hostinger URL — use it directly.
+  // Backend always returns an absolute Hostinger URL.
   return res.data.url;
 };
